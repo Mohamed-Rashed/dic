@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/view/splash.dart';
+import 'package:provider/provider.dart';
 import 'const/translation.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => CheckInternet()),
+  ], child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

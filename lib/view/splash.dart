@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:connectivity_widget/connectivity_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/model/todayword.dart';
 import 'package:maksid_dictionaty/service/words-services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import '../const/const.dart';
@@ -69,32 +71,33 @@ class _SplashState extends State<Splash> {
     todaywordcheck();
   }
 
-  Widget noInternetConnection() {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset("assets/img/internet.png"),
-            Text("No Internet Please Check your Internet Connrction"),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CheckInternet>(context);
     return SplashScreenView(
         home: ConnectivityWidget(
-          builder: (context, isOnline) => Column(
-              children:[
-
-                SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: home()),
-              ],
-            ),
+          builder: (context, isOnline){
+            if(isOnline){
+              provider.isOnline = true;
+              return Column(
+                children:[
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: home()),
+                ],
+              );
+            }
+            else{
+              provider.isOnline = false;
+              return Column(
+                children:[
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      child: home()),
+                ],
+              );
+            }
+          }
         ),
         duration: 6500,
         imageSize: 150,
@@ -109,21 +112,3 @@ class _SplashState extends State<Splash> {
       );
   }
 }
-
-/* OfflineBuilder(
-          connectivityBuilder: (
-            BuildContext context,
-            ConnectivityResult connectivity,
-            Widget child,
-          ) {
-            final bool connected = connectivity != ConnectivityResult.none;
-            if (connected) {
-              return home();
-            } else {
-              return noInternetConnection();
-            }
-          },
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        )*/

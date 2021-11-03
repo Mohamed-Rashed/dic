@@ -3,6 +3,7 @@ import 'package:maksid_dictionaty/model/words.dart';
 import 'package:maksid_dictionaty/model/wordsLocalDataBase.dart';
 
 class WordProvider extends ChangeNotifier{
+  bool isOnline;
   List<WordModel> WordList = [];
   get getWordList => WordList;
 

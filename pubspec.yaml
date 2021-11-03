@@ -50,6 +50,7 @@ dependencies:
   dio: any
   path_provider: any
   connectivity_widget:
+  fluttertoast: ^8.0.8
 
 
 

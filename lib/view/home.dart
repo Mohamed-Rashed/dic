@@ -1,22 +1,26 @@
-import 'package:dio/dio.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/model/words.dart';
 import 'package:maksid_dictionaty/model/wordsLocalDataBase.dart';
 import 'package:maksid_dictionaty/view/search-screen.dart';
 import 'package:maksid_dictionaty/view/view-categorywords/viewcategory.dart';
 import 'package:maksid_dictionaty/view/view-favorite/favorite.dart';
+import 'package:provider/provider.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../const/const.dart';
 import '../functios.dart';
 
 class home extends StatefulWidget {
+  home();
+
   @override
   _homeState createState() => _homeState();
 }
@@ -28,6 +32,7 @@ class _homeState extends State<home> {
   SharedPreferences prefs;
   WordModel Tword;
   DateTime currentBackPressTime;
+  Timer timer;
 
   Future<void> _getBool() async {
     prefs = await SharedPreferences.getInstance();
@@ -101,9 +106,20 @@ class _homeState extends State<home> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+     final provider = Provider.of<CheckInternet>(context, listen: false);
+     timer = Timer.periodic(Duration(seconds: 10), (Timer t) => checkForNewSharedLists(provider.isOnline));
+    });
     GetAllWords();
     _getBool();
     fetchTodayword();
+  }
+
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   Future<bool> onWillPop() {
@@ -125,10 +141,25 @@ class _homeState extends State<home> {
   void _logout() {
     SystemNavigator.pop();
   }
+  checkForNewSharedLists(bool isOnline) async{
+    Timer(Duration(seconds: 10), () {
+      if(!(isOnline)){
+        Fluttertoast.showToast(
+            msg: "No internet Please try again later",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var dio = Dio();
+    final provider = Provider.of<CheckInternet>(context, listen: false);
     return Scaffold(
       body: WillPopScope(
         onWillPop: onWillPop,
@@ -225,7 +256,20 @@ class _homeState extends State<home> {
                                               size: 30.r,
                                             ),
                                             onPressed: () {
-                                              play(Tword.audioFile);
+                                              if(provider.isOnline){
+                                                play(Tword.audioFile , provider);
+                                              }
+                                              else{
+                                                Fluttertoast.showToast(
+                                                    msg: "No internet Please try again later",
+                                                    toastLength: Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0
+                                                );
+                                              }
                                             })
                                         : Container(),
                                     GestureDetector(

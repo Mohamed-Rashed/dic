@@ -263,10 +263,8 @@ class favoirte extends StatelessWidget {
                                                       color: kPrimaryColor,
                                                     ),
                                                     onPressed: () {
-                                                      play(WordList[index]
-                                                          .audioFile);
-                                                      // play(WordList[index]
-                                                      //     .audioFile);
+                                                      /*play(WordList[index]
+                                                          .audioFile);*/
                                                     },
                                                   ),
                                                   flex: 1,

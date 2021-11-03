@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/model/words.dart';
 import 'package:maksid_dictionaty/model/wordsLocalDataBase.dart';
 import 'package:maksid_dictionaty/service/share.dart';
@@ -12,6 +14,7 @@ import 'package:maksid_dictionaty/view/view-categorywords/viewcategory.dart';
 import 'package:maksid_dictionaty/view/view-favorite/favorite-viewmodel.dart';
 import 'package:maksid_dictionaty/view/view-favorite/favorite.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 import '../const/const.dart';
 import '../functios.dart';
@@ -255,6 +258,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<CheckInternet>(context, listen: false);
     return WillPopScope(
       onWillPop: () {
         Navigator.pushReplacement(
@@ -684,17 +688,29 @@ class _SearchScreenState extends State<SearchScreen> {
                           widget.word.audioFile != null) ?
                         Material(
                           color: Colors.transparent,
-                          child: InkWell(
+                          child:InkWell(
                             customBorder: new CircleBorder(),
                             onTap: () async {
-                              await play(widget.word.audioFile);
-                              //play(widget.word.audioFile);
+                              if(provider.isOnline){
+                                await play(widget.word.audioFile,provider);
+                              }
+                              else{
+                                Fluttertoast.showToast(
+                                    msg: "No internet Please try again later",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+                              }
                             },
-                            child: Icon(
+                            child:provider.isExists ? Icon(
                               Icons.play_circle_fill_outlined,
                               size: 40.r,
                               color: kPrimaryColor,
-                            ),
+                            ) : CircularProgressIndicator(),
                           ),
                         ) : Container(),
                       if (widget.word.gender != "" &&
@@ -772,13 +788,16 @@ class _SearchScreenState extends State<SearchScreen> {
                           Flexible(
                             // flex: 0,
                             child: Text(
-                              widget.word.meaning.replaceAll('.', ''),
+                              widget.word.meaning,
                               maxLines: 4,
                               style: style(
                                   "ar", 22, FontWeight.w400, Colors.black),
                               textAlign: TextAlign.right,
+                              textDirection: TextDirection.rtl,
                             ),
+
                           ),
+
                         ],
                       ),
                     ),
@@ -800,16 +819,18 @@ class _SearchScreenState extends State<SearchScreen> {
                         children: [
                           Flexible(
                             child: Text(
-                              "${widget.word.examples.replaceAll('|', "\n").replaceAll('.', '')}",
+                              "${widget.word.examples.replaceAll('|', "\n")}",
                               style: style(
                                 "ar",
                                 19.sp,
                                 FontWeight.w300,
                                 Colors.black,
                               ),
+                              textDirection: TextDirection.rtl,
                               textAlign: TextAlign.right,
                             ),
                           ),
+
                         ],
                       ),
                     ),
@@ -1074,8 +1095,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                     child: SingleChildScrollView(
                                       physics: BouncingScrollPhysics(),
                                       child: Text(
-                                        widget.word.usageNotes.replaceAll('.', ''),
+                                        widget.word.usageNotes,
                                         textAlign: TextAlign.right,
+                                        textDirection: TextDirection.rtl,
                                         style: style("ar", 17, FontWeight.w300,
                                             Colors.black),
                                       ),
