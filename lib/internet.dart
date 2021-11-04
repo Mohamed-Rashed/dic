@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 class CheckInternet extends ChangeNotifier{
 
   bool _isOnline = true;
-  bool _isExists = true;
+  bool _isExists = false;
 
   bool get isExists => _isExists;
 

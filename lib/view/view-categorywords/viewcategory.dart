@@ -3,7 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/model/wordsLocalDataBase.dart';
 import 'package:maksid_dictionaty/view/view-favorite/favorite.dart';
 import '../../const/const.dart';
@@ -23,6 +25,30 @@ class _WordCategoryState extends State<WordCategory> {
   List<DropdownMenuItem> categories;
   String dropval = "all";
   List<Map> allCategories;
+  IconData iconData = Icons.play_circle_fill_outlined;
+  void _onPressed(CheckInternet provider, audioFile){
+    if(provider.isOnline){
+      provider.isExists = false;
+      setState(() {
+        iconData = Icons.adjust_rounded;
+      });
+      play(audioFile , provider);
+      setState(() {
+        iconData = Icons.play_circle_fill_outlined;
+      });
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "No internet Please try again later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+  }
   GetAllcategories() async {
     allCategories = await WordModel_service_database().getallcat();
     List<DropdownMenuItem> item2 = [];
@@ -66,7 +92,7 @@ class _WordCategoryState extends State<WordCategory> {
   String lung = Get.locale.toString();
   @override
   Widget build(BuildContext context) {
-    var dio = Dio();
+    final provider = Provider.of<CheckInternet>(context, listen: false);
     return ChangeNotifierProvider.value(
       value: WordCatProvider(),
       child: WillPopScope(
@@ -358,16 +384,15 @@ class _WordCategoryState extends State<WordCategory> {
                                                           ? Expanded(
                                                               child: IconButton(
                                                                   icon: Icon(
-                                                                    Icons
-                                                                        .play_circle_fill,
+                                                                    iconData,
                                                                     color:
                                                                         kPrimaryColor,
                                                                   ),
                                                                   onPressed:
                                                                       () {
-                                                                   /* play(WordList[
-                                                                            index]
-                                                                        .audioFile);*/
+                                                                   _onPressed(provider,WordList[
+                                                                   index]
+                                                                       .audioFile);
                                                                   }),
                                                               flex: 1,
                                                             )

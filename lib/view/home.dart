@@ -33,6 +33,31 @@ class _homeState extends State<home> {
   WordModel Tword;
   DateTime currentBackPressTime;
   Timer timer;
+  IconData iconData = Icons.play_circle_fill_outlined;
+
+  void _onPressed(CheckInternet provider){
+    if(provider.isOnline){
+      provider.isExists = false;
+      setState(() {
+        iconData = Icons.adjust_rounded;
+      });
+      play(Tword.audioFile , provider);
+      setState(() {
+        iconData = Icons.play_circle_fill_outlined;
+      });
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "No internet Please try again later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+  }
 
   Future<void> _getBool() async {
     prefs = await SharedPreferences.getInstance();
@@ -252,25 +277,13 @@ class _homeState extends State<home> {
                                             Tword.audioFile != null)
                                         ? IconButton(
                                             icon: Icon(
-                                              Icons.play_circle_fill_outlined,
+                                              iconData,
                                               size: 30.r,
                                             ),
-                                            onPressed: () {
-                                              if(provider.isOnline){
-                                                play(Tword.audioFile , provider);
-                                              }
-                                              else{
-                                                Fluttertoast.showToast(
-                                                    msg: "No internet Please try again later",
-                                                    toastLength: Toast.LENGTH_SHORT,
-                                                    gravity: ToastGravity.BOTTOM,
-                                                    timeInSecForIosWeb: 1,
-                                                    backgroundColor: Colors.red,
-                                                    textColor: Colors.white,
-                                                    fontSize: 16.0
-                                                );
-                                              }
-                                            })
+                                            onPressed:(){
+                                              _onPressed(provider);
+                                            }
+                                            )
                                         : Container(),
                                     GestureDetector(
                                       onTap: () {

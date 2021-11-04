@@ -1,31 +1,58 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:maksid_dictionaty/functios.dart';
+import 'package:maksid_dictionaty/internet.dart';
 import 'package:maksid_dictionaty/model/words.dart';
 import 'package:maksid_dictionaty/view/view-categorywords/viewcategory.dart';
 import '../../const/const.dart';
 import 'package:provider/provider.dart';
-
-import '../../functios.dart';
 import '../home.dart';
 import '../search-screen.dart';
 import 'favorite-viewmodel.dart';
 
-class favoirte extends StatelessWidget {
-  String lung = Get.locale.toString();
+class favoirte extends StatefulWidget {
   final WordModel word;
-
   favoirte({Key key, this.word}) : super(key: key);
+
+  @override
+  _favoirteState createState() => _favoirteState();
+}
+
+class _favoirteState extends State<favoirte> {
+  String lung = Get.locale.toString();
+
+  IconData iconData = Icons.play_circle_fill_outlined;
+
+  void _onPressed(CheckInternet provider, audioFile) {
+    if (provider.isOnline) {
+      provider.isExists = false;
+      setState(() {
+        iconData = Icons.adjust_rounded;
+      });
+      play(audioFile, provider);
+      setState(() {
+        iconData = Icons.play_circle_fill_outlined;
+      });
+    } else {
+      Fluttertoast.showToast(
+          msg: "No internet Please try again later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var dio = Dio();
+    final provider = Provider.of<CheckInternet>(context, listen: false);
     return ChangeNotifierProvider.value(
       value: WordProvider(),
       child: WillPopScope(
@@ -259,12 +286,14 @@ class favoirte extends StatelessWidget {
                                               ? Expanded(
                                                   child: IconButton(
                                                     icon: Icon(
-                                                      Icons.play_circle_fill,
+                                                      iconData,
                                                       color: kPrimaryColor,
                                                     ),
                                                     onPressed: () {
-                                                      /*play(WordList[index]
-                                                          .audioFile);*/
+                                                      _onPressed(
+                                                          provider,
+                                                          WordList[index]
+                                                              .audioFile);
                                                     },
                                                   ),
                                                   flex: 1,

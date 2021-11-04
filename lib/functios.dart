@@ -7,9 +7,6 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:maksid_dictionaty/internet.dart';
 import 'package:path_provider/path_provider.dart';
 
-
-
-
 play(String url, CheckInternet provider) async {
   var dio = Dio();
 
@@ -23,7 +20,7 @@ play(String url, CheckInternet provider) async {
   String fullPath = "$path/$url";
 
   if (File(fullPath).existsSync()) {
-
+    provider.isExists = true;
     player.play(fullPath);
   } else {
     try {

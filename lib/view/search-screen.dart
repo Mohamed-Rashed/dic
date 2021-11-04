@@ -37,6 +37,33 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Map> allCategories = [];
   String lung = Get.locale.toString();
   bool oppG = false;
+  IconData iconData = Icons.play_circle_fill_outlined;
+
+  void _onPressed(CheckInternet provider) async{
+    if(provider.isOnline){
+      provider.isExists = false;
+      setState(() {
+        iconData = Icons.adjust_rounded;
+      });
+      await play(widget.word.audioFile,provider);
+      if(provider.isExists){
+        setState(() {
+          iconData = Icons.play_circle_fill_outlined;
+        });
+      }
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "No internet Please try again later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+  }
   List pronouns = [
     'I',
     'you_male',
@@ -690,27 +717,14 @@ class _SearchScreenState extends State<SearchScreen> {
                           color: Colors.transparent,
                           child:InkWell(
                             customBorder: new CircleBorder(),
-                            onTap: () async {
-                              if(provider.isOnline){
-                                await play(widget.word.audioFile,provider);
-                              }
-                              else{
-                                Fluttertoast.showToast(
-                                    msg: "No internet Please try again later",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0
-                                );
-                              }
+                            onTap: (){
+                              _onPressed(provider);
                             },
-                            child:provider.isExists ? Icon(
-                              Icons.play_circle_fill_outlined,
+                            child:Icon(
+                              iconData,
                               size: 40.r,
                               color: kPrimaryColor,
-                            ) : CircularProgressIndicator(),
+                            )
                           ),
                         ) : Container(),
                       if (widget.word.gender != "" &&
