@@ -1111,7 +1111,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       child: Text(
                                         widget.word.usageNotes,
                                         textAlign: TextAlign.right,
-                                        textDirection: TextDirection.rtl,
+                                        textDirection: Get.locale.toString() == 'ar' ?TextDirection.rtl : TextDirection.ltr,
                                         style: style("ar", 17, FontWeight.w300,
                                             Colors.black),
                                       ),

@@ -131,13 +131,15 @@ class _homeState extends State<home> {
 
   @override
   void initState() {
+    fetchTodayword();
+    GetAllWords();
+    _getBool();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
      final provider = Provider.of<CheckInternet>(context, listen: false);
      timer = Timer.periodic(Duration(seconds: 10), (Timer t) => checkForNewSharedLists(provider.isOnline));
     });
-    GetAllWords();
-    _getBool();
-    fetchTodayword();
+
+
   }
 
 
