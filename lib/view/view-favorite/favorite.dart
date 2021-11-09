@@ -29,25 +29,14 @@ class _favoirteState extends State<favoirte> {
   IconData iconData = Icons.play_circle_fill_outlined;
 
   void _onPressed(CheckInternet provider, audioFile) {
-    if (provider.isOnline) {
-      provider.isExists = false;
-      setState(() {
-        iconData = Icons.adjust_rounded;
-      });
-      play(audioFile, provider);
-      setState(() {
-        iconData = Icons.play_circle_fill_outlined;
-      });
-    } else {
-      Fluttertoast.showToast(
-          msg: "No internet Please try again later",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    }
+    provider.isExists = false;
+    setState(() {
+      iconData = Icons.adjust_rounded;
+    });
+    play(audioFile, provider);
+    setState(() {
+      iconData = Icons.play_circle_fill_outlined;
+    });
   }
 
   @override
@@ -299,11 +288,24 @@ class _favoirteState extends State<favoirte> {
                                                   flex: 1,
                                                 )
                                               : Expanded(
-                                                  child: SizedBox(
-                                                    width: 20.w,
-                                                  ),
-                                                  flex: 1,
-                                                ),
+                                            child: IconButton(
+                                              icon: Icon(
+                                                Icons.play_circle_fill_outlined,
+                                                color: kPrimaryColor,
+                                              ),
+                                              onPressed: () {
+                                                Fluttertoast.showToast(
+                                                    msg: "This file is not exist , please try again later",
+                                                    toastLength: Toast.LENGTH_SHORT,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.amberAccent,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                              },
+                                            ),
+                                            flex: 1,
+                                          ),
                                           if (WordList[index].level != "")
                                             Expanded(
                                               child: Text(

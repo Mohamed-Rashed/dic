@@ -35,28 +35,15 @@ class _homeState extends State<home> {
   Timer timer;
   IconData iconData = Icons.play_circle_fill_outlined;
 
-  void _onPressed(CheckInternet provider){
-    if(provider.isOnline){
-      provider.isExists = false;
-      setState(() {
-        iconData = Icons.adjust_rounded;
-      });
-      play(Tword.audioFile , provider);
-      setState(() {
-        iconData = Icons.play_circle_fill_outlined;
-      });
-    }
-    else{
-      Fluttertoast.showToast(
-          msg: "No internet Please try again later",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-    }
+  void _onPressed(CheckInternet provider) {
+    provider.isExists = false;
+    setState(() {
+      iconData = Icons.adjust_rounded;
+    });
+    play(Tword.audioFile, provider);
+    setState(() {
+      iconData = Icons.play_circle_fill_outlined;
+    });
   }
 
   Future<void> _getBool() async {
@@ -135,13 +122,11 @@ class _homeState extends State<home> {
     GetAllWords();
     _getBool();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-     final provider = Provider.of<CheckInternet>(context, listen: false);
-     timer = Timer.periodic(Duration(seconds: 10), (Timer t) => checkForNewSharedLists(provider.isOnline));
+      final provider = Provider.of<CheckInternet>(context, listen: false);
+      timer = Timer.periodic(Duration(seconds: 10),
+          (Timer t) => checkForNewSharedLists(provider.isOnline));
     });
-
-
   }
-
 
   @override
   void dispose() {
@@ -168,9 +153,10 @@ class _homeState extends State<home> {
   void _logout() {
     SystemNavigator.pop();
   }
-  checkForNewSharedLists(bool isOnline) async{
+
+  checkForNewSharedLists(bool isOnline) async {
     Timer(Duration(seconds: 10), () {
-      if(!(isOnline)){
+      if (!(isOnline)) {
         Fluttertoast.showToast(
             msg: "No internet Please try again later",
             toastLength: Toast.LENGTH_SHORT,
@@ -178,8 +164,7 @@ class _homeState extends State<home> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       }
     });
   }
@@ -282,11 +267,26 @@ class _homeState extends State<home> {
                                               iconData,
                                               size: 30.r,
                                             ),
-                                            onPressed:(){
+                                            onPressed: () {
                                               _onPressed(provider);
-                                            }
-                                            )
-                                        : Container(),
+                                            })
+                                        : IconButton(
+                                            icon: Icon(
+                                              Icons.play_circle_fill_outlined,
+                                              size: 30.r,
+                                            ),
+                                            onPressed: () {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "This file is not exist , please try again later",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.amberAccent,
+                                                textColor: Colors.white,
+                                                fontSize: 16.0,
+                                              );
+                                            }),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(

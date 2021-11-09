@@ -26,29 +26,17 @@ class _WordCategoryState extends State<WordCategory> {
   String dropval = "all";
   List<Map> allCategories;
   IconData iconData = Icons.play_circle_fill_outlined;
-  void _onPressed(CheckInternet provider, audioFile){
-    if(provider.isOnline){
-      provider.isExists = false;
-      setState(() {
-        iconData = Icons.adjust_rounded;
-      });
-      play(audioFile , provider);
-      setState(() {
-        iconData = Icons.play_circle_fill_outlined;
-      });
-    }
-    else{
-      Fluttertoast.showToast(
-          msg: "No internet Please try again later",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-    }
+  void _onPressed(CheckInternet provider, audioFile) {
+    provider.isExists = false;
+    setState(() {
+      iconData = Icons.adjust_rounded;
+    });
+    play(audioFile, provider);
+    setState(() {
+      iconData = Icons.play_circle_fill_outlined;
+    });
   }
+
   GetAllcategories() async {
     allCategories = await WordModel_service_database().getallcat();
     List<DropdownMenuItem> item2 = [];
@@ -75,8 +63,7 @@ class _WordCategoryState extends State<WordCategory> {
           ),
         )),
         value: allCategories[i]["cat"],
-        onTap: () {
-        },
+        onTap: () {},
       ));
     }
     setState(() {
@@ -390,16 +377,43 @@ class _WordCategoryState extends State<WordCategory> {
                                                                   ),
                                                                   onPressed:
                                                                       () {
-                                                                   _onPressed(provider,WordList[
-                                                                   index]
-                                                                       .audioFile);
+                                                                    _onPressed(
+                                                                        provider,
+                                                                        WordList[index]
+                                                                            .audioFile);
                                                                   }),
                                                               flex: 1,
                                                             )
                                                           : Expanded(
-                                                              child: SizedBox(
-                                                                width: 20.w,
-                                                              ),
+                                                              child: IconButton(
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .play_circle_fill_outlined,
+                                                                    color:
+                                                                        kPrimaryColor,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Fluttertoast.showToast(
+                                                                        msg:
+                                                                            "This file is not exist , please try again later",
+                                                                        toastLength:
+                                                                            Toast
+                                                                                .LENGTH_SHORT,
+                                                                        gravity:
+                                                                            ToastGravity
+                                                                                .BOTTOM,
+                                                                        timeInSecForIosWeb:
+                                                                            1,
+                                                                        backgroundColor:
+                                                                            Colors
+                                                                                .amberAccent,
+                                                                        textColor:
+                                                                            Colors
+                                                                                .white,
+                                                                        fontSize:
+                                                                            16.0);
+                                                                  }),
                                                               flex: 1,
                                                             ),
                                                       if (WordList[index]

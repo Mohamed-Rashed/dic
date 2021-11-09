@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,28 +39,15 @@ class _SearchScreenState extends State<SearchScreen> {
   IconData iconData = Icons.play_circle_fill_outlined;
 
   void _onPressed(CheckInternet provider) async{
-    if(provider.isOnline){
-      provider.isExists = false;
+    provider.isExists = false;
+    setState(() {
+      iconData = Icons.adjust_rounded;
+    });
+    await play(widget.word.audioFile,provider);
+    if(provider.isExists){
       setState(() {
-        iconData = Icons.adjust_rounded;
+        iconData = Icons.play_circle_fill_outlined;
       });
-      await play(widget.word.audioFile,provider);
-      if(provider.isExists){
-        setState(() {
-          iconData = Icons.play_circle_fill_outlined;
-        });
-      }
-    }
-    else{
-      Fluttertoast.showToast(
-          msg: "No internet Please try again later",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
     }
   }
   List pronouns = [
@@ -726,7 +712,28 @@ class _SearchScreenState extends State<SearchScreen> {
                               color: kPrimaryColor,
                             )
                           ),
-                        ) : Container(),
+                        ) : Material(
+                        color: Colors.transparent,
+                        child:InkWell(
+                            customBorder: new CircleBorder(),
+                            onTap: (){
+                              Fluttertoast.showToast(
+                                  msg: "This file is not exist , please try again later",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.amberAccent,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                            },
+                            child:Icon(
+                              Icons.play_circle_fill_outlined,
+                              size: 40.r,
+                              color: kPrimaryColor,
+                            )
+                        ),
+                      ),
                       if (widget.word.gender != "" &&
                           widget.word.gender != null)
                         SizedBox(
